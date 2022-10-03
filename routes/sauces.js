@@ -1,5 +1,5 @@
 const express = require('express');
-const Sauce = require('../models/sauce');
+// const Sauce = require('../models/sauce');
 const router = express.Router();
 
 const auth = require('../middleware/auth');
@@ -17,21 +17,15 @@ router.get('/', auth, sauceCtrl.getAllSauces);
 // dans la base de données en définissant correctement
 // son imageUrl. Initialise les likes et dislikes de la sauce à
 // 0 et les usersLiked etusersDisliked avec des tableaux vides. 
-// router.get('/', multer, sauceCtrl.createSauce);
+router.post('/', auth, multer, sauceCtrl.createSauce);
 // // Renvoie la sauce avec l’_id fourni.
-// router.get('/:id', auth, sauceCtrl.getOneSauces);
-
-
-// router.post('/',);
-
-// //mettre à jourS
-// router.put('/:id', auth, multer, sauceCtrl.modifySauces);
-
+router.get('/:id', auth, sauceCtrl.getOneSauce);
+// //mettre à jour
+router.put('/:id', auth, multer, sauceCtrl.modifySauce);
 // //supprimer
-// router.delete('/:id', auth, sauceCtrl.deleteSauces);
-
+router.delete('/:id', auth, sauceCtrl.deleteSauce);
 // // Définit le statut « Like » pour l' userId fourni
-// router.post('/api/sauces/:id/like', sauceCtrl.likeSauces);
+router.post('/api/sauces/:id/like', auth, sauceCtrl.likeSauce);
 
 
 module.exports = router;
