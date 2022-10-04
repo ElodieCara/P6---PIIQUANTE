@@ -25,7 +25,7 @@ router.put('/:id', auth, multer, sauceCtrl.modifySauce);
 // //supprimer
 router.delete('/:id', auth, sauceCtrl.deleteSauce);
 // // Définit le statut « Like » pour l' userId fourni
-router.post('/api/sauces/:id/like', auth, sauceCtrl.likeSauce);
+router.post('/:id/like', auth, sauceCtrl.likeSauce);
 
 
 module.exports = router;

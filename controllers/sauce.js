@@ -12,7 +12,7 @@ exports.getAllSauces = (req, res, next) => {
 exports.createSauce = (req, res, next) => {
     const sauceObject = JSON.parse(req.body.sauce);
     delete sauceObject._id;
-    delete sauceObject._userId;
+    delete sauceObject.userId;
     const sauce = new Sauce({
         ...sauceObject,
         userId: req.auth.userId,
@@ -47,14 +47,14 @@ exports.modifySauce = (req, res, next) => {
             ...JSON.parse(req.body.sauce),
             imageUrl: `${req.protocol}://${req.get('host')}/images/${req.file.filename}`
         } : { ...req.body }
-    Sauce.updateOne({ _id: req.params.id }, { ...req.body, _id: req.params.id })
+    Sauce.updateOne({ _id: req.params.id, userId: req.auth.userId }, { ...sauceObject })
         .then(() => res.status(201).json({ message: 'Objet modifié !' }))
         .catch(error => res.status(400).json({ error }));
 }
 
 //Supprimer une sauce
 exports.deleteSauce = (req, res, next) => {
-    Sauce.findOne({ _id: req.params.id })
+    Sauce.findOne({ _id: req.params.id, userId: req.auth.userId })
         .then(sauce => {
             const filename = sauce.imageUrl.split('/images/')[1]
             fs.unlink(`images/${filename}`, () => {
@@ -69,11 +69,11 @@ exports.deleteSauce = (req, res, next) => {
 // Liker sauce ou Dislike
 exports.likeSauce = (req, res, next) => {
     if (req.body.like === 1) {
-        Sauce.updateOne({ _id: req.params.id }, { $inc: { likes: req.body.like++ }, $push: { usersLiked: req.body.userId } })
+        Sauce.updateOne({ _id: req.params.id }, { $inc: { likes: +1 }, $push: { usersLiked: req.body.userId } })
             .then((sauce) => res.status(200).json({ message: 'Like ajouté !' }))
             .catch(error => res.status(400).json({ error }))
     } else if (req.body.like === -1) {
-        Sauce.updateOne({ _id: req.params.id }, { $inc: { dislikes: (req.body.like++) * -1 }, $push: { usersDisliked: req.body.userId } })
+        Sauce.updateOne({ _id: req.params.id }, { $inc: { dislikes: +1 }, $push: { usersDisliked: req.body.userId } })
             .then((sauce) => res.status(200).json({ message: 'Dislike ajouté !' }))
             .catch(error => res.status(400).json({ error }))
     } else {
