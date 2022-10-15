@@ -2,13 +2,15 @@ const express = require('express');
 const app = express();
 const mongoose = require('mongoose');
 
+require('dotenv').config();
 
+//importer nouveau routeur
 const saucesRoutes = require('./routes/sauces');
 const userRoutes = require('./routes/auth');
 const path = require('path');
 
 // On se connecte à la base de données
-mongoose.connect('mongodb+srv://elodiecara:elodiecara@cluster0.dy5ozay.mongodb.net/?retryWrites=true&w=majority', {
+mongoose.connect(process.env.DB_URL, {
     useNewUrlParser: true,
     useUnifiedTopology: true
 })
@@ -26,6 +28,7 @@ app.use((req, res, next) => {
 
 app.use(express.json())
 
+//enregistrer notre routeur pour toutes les demandes effectuées
 app.use('/api/auth', userRoutes);
 app.use('/api/sauces', saucesRoutes);
 app.use('/images', express.static(path.join(__dirname, 'images')));

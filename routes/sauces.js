@@ -8,9 +8,7 @@ const multer = require('../middleware/multer-config');
 const sauceCtrl = require('../controllers/sauce');
 
 
-// Renvoie un tableau de
-// toutes les sauces de la base
-// de données.
+// Renvoie un tableau de toutes les sauces de la base de données.
 router.get('/', auth, sauceCtrl.getAllSauces);
 // Capture et enregistre l'image, analyse la sauce
 // transformée en chaîne de caractères et l'enregistre
@@ -18,13 +16,13 @@ router.get('/', auth, sauceCtrl.getAllSauces);
 // son imageUrl. Initialise les likes et dislikes de la sauce à
 // 0 et les usersLiked etusersDisliked avec des tableaux vides. 
 router.post('/', auth, multer, sauceCtrl.createSauce);
-// // Renvoie la sauce avec l’_id fourni.
+// Renvoie la sauce avec l’_id fourni.
 router.get('/:id', auth, sauceCtrl.getOneSauce);
-// //mettre à jour
+// mettre à jour
 router.put('/:id', auth, multer, sauceCtrl.modifySauce);
-// //supprimer
+// supprimer
 router.delete('/:id', auth, sauceCtrl.deleteSauce);
-// // Définit le statut « Like » pour l' userId fourni
+// Définit le statut « Like » pour l' userId fourni
 router.post('/:id/like', auth, sauceCtrl.likeSauce);
 
 
