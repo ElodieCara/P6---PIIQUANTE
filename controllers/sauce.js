@@ -47,11 +47,19 @@ exports.modifySauce = (req, res, next) => {
             ...JSON.parse(req.body.sauce),
             imageUrl: `${req.protocol}://${req.get('host')}/images/${req.file.filename}`
         } : { ...req.body }
-    Sauce.updateOne({ _id: req.params.id, userId: req.auth.userId }, { ...sauceObject })
-        .then(() => res.status(201).json({ message: 'Objet modifié !' }))
+    Sauce.findOne({ _id: req.params.id, userId: req.auth.userId })
+        .then(sauce => {
+            if (req.file) fs.unlinkSync(__dirname + '/../images/' + req.file.filename)
+            Sauce.updateOne({ _id: req.params.id, userId: req.auth.userId }, { ...sauceObject })
+                .then(() => res.status(201).json({ message: 'Objet modifié !' }))
+                .catch(error => {
+                    if (req.file) fs.unlinkSync(__dirname + '/../images/' + req.file.filename)
+                    res.status(403).json({ error })
+                });
+        })
         .catch(error => {
             if (req.file) fs.unlinkSync(__dirname + '/../images/' + req.file.filename)
-            res.status(403).json({ error })//403: unauthorized request
+            res.status(403).json({ error })
         });
 }
 

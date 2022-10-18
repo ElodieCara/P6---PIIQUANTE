@@ -1,6 +1,9 @@
 const express = require('express');
 const app = express();
 const mongoose = require('mongoose');
+const Ddos = require('ddos');
+const ddos = new Ddos;
+const helmet = require('helmet');
 
 require('dotenv').config();
 
@@ -18,6 +21,11 @@ mongoose.connect(process.env.DB_URL, {
     .catch(() => console.log('Connexion à MongoDb échouée !'))
     ;
 
+app.use(express.json())
+app.use(ddos.express);
+app.use('/images', express.static(path.join(__dirname, 'images')));
+app.use(helmet());
+
 //CORS authorisations
 app.use((req, res, next) => {
     res.setHeader('Access-Control-Allow-Origin', '*');
@@ -26,12 +34,9 @@ app.use((req, res, next) => {
     next();
 });
 
-app.use(express.json())
-
 //enregistrer notre routeur pour toutes les demandes effectuées
 app.use('/api/auth', userRoutes);
 app.use('/api/sauces', saucesRoutes);
-app.use('/images', express.static(path.join(__dirname, 'images')));
 
 module.exports = app;
 
